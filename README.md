@@ -78,7 +78,7 @@ Content-Type: application/json
 
 {
   "table_id": 1,
-  "customer_name": "Aakash",
+  "customer_name": "Abhi",
   "items": [
     { "menu_item_id": 1, "quantity": 2 },
     { "menu_item_id": 2, "quantity": 1 }
