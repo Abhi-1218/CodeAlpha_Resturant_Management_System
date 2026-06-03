@@ -1,0 +1,8 @@
+{
+  "python.defaultInterpreterPath": "python",
+  "python.terminal.activateEnvironment": true,
+  "code-runner.executorMap": {
+    "python": "python"
+  },
+  "code-runner.runInTerminal": true
+}

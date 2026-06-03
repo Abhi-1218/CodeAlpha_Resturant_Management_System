@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Restaurant Management System</title>
+  <style>
+    :root {
+      --ink: #17202a;
+      --muted: #637083;
+      --line: #d9e0e7;
+      --panel: #ffffff;
+      --page: #f4f6f8;
+      --brand: #174b63;
+      --brand-2: #2f7d68;
+      --danger: #b42318;
+      --warn: #a15c07;
+      --ok: #146c43;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--page);
+      color: var(--ink);
+    }
+
+    header {
+      background: var(--brand);
+      color: white;
+      padding: 22px 28px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: 28px;
+      margin-bottom: 4px;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+
+    main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 22px;
+    }
+
+    .top-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .status-bar {
+      background: #e8f3ef;
+      border: 1px solid #c8e2d8;
+      color: #174534;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+      min-height: 42px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px;
+      min-width: 0;
+    }
+
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+
+    .metric {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: baseline;
+      border-top: 1px solid var(--line);
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+
+    .metric strong {
+      font-size: 24px;
+    }
+
+    label {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    input, select {
+      width: 100%;
+      border: 1px solid #c8d0d8;
+      border-radius: 6px;
+      padding: 9px 10px;
+      font: inherit;
+      background: white;
+      min-height: 38px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .form-row.three {
+      grid-template-columns: 2fr 1fr auto;
+      align-items: end;
+    }
+
+    button {
+      border: 0;
+      border-radius: 6px;
+      background: var(--brand-2);
+      color: white;
+      padding: 9px 12px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      min-height: 38px;
+    }
+
+    button.secondary {
+      background: #edf1f5;
+      color: var(--ink);
+      border: 1px solid #cfd7df;
+    }
+
+    button.danger {
+      background: var(--danger);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--line);
+      text-align: left;
+      padding: 9px 8px;
+      vertical-align: top;
+    }
+
+    th {
+      color: #445064;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0;
+      background: #f8fafc;
+    }
+
+    .tag {
+      display: inline-block;
+      border-radius: 999px;
+      padding: 3px 8px;
+      font-size: 12px;
+      font-weight: 700;
+      background: #edf1f5;
+      color: #3b4654;
+    }
+
+    .tag.available, .tag.paid, .tag.served {
+      background: #e8f3ef;
+      color: var(--ok);
+    }
+
+    .tag.reserved, .tag.preparing {
+      background: #fff4df;
+      color: var(--warn);
+    }
+
+    .tag.occupied, .tag.pending {
+      background: #e9f1ff;
+      color: #2458a6;
+    }
+
+    .tag.cancelled, .tag.low {
+      background: #fde8e7;
+      color: var(--danger);
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .stack {
+      display: grid;
+      gap: 10px;
+    }
+
+    .order-item {
+      display: grid;
+      grid-template-columns: 1fr 90px 40px;
+      gap: 8px;
+      align-items: end;
+    }
+
+    .empty {
+      color: var(--muted);
+      padding: 14px 0;
+    }
+
+    @media (max-width: 960px) {
+      .span-3, .span-4, .span-5, .span-6, .span-7, .span-8 {
+        grid-column: span 12;
+      }
+    }
+
+    @media (max-width: 640px) {
+      header {
+        padding: 18px;
+      }
+
+      main {
+        padding: 14px;
+      }
+
+      .form-row, .form-row.three, .order-item {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Restaurant Management System</h1>
+      <div>Manage orders, tables, reservations, inventory, and reports.</div>
+    </div>
+    <div class="top-actions">
+      <a href="/admin/" target="_blank"><button type="button" class="secondary">Admin Panel</button></a>
+      <button type="button" id="refreshAll">Refresh</button>
+    </div>
+  </header>
+
+  <main>
+    <div id="message" class="status-bar">Loading restaurant data...</div>
+
+    <section class="grid">
+      <div class="panel span-3">
+        <h2>Today</h2>
+        <div class="metric"><span>Total Order Value</span><strong id="orderValueTotal">Rs 0</strong></div>
+        <div class="metric"><span>Paid Sales</span><strong id="salesTotal">Rs 0</strong></div>
+        <div class="metric"><span>Orders</span><strong id="ordersTotal">0</strong></div>
+        <div class="metric"><span>Tables</span><strong id="tableSummary">0</strong></div>
+        <div class="metric"><span>Stock Alerts</span><strong id="alertCount">0</strong></div>
+      </div>
+
+      <div class="panel span-5">
+        <h2>Place Order</h2>
+        <form id="orderForm" class="stack">
+          <div class="form-row">
+            <div>
+              <label for="orderTable">Table</label>
+              <select id="orderTable" required></select>
+            </div>
+            <div>
+              <label for="customerName">Customer Name</label>
+              <input id="customerName" placeholder="Walk-in customer">
+            </div>
+          </div>
+          <div id="orderItems" class="stack"></div>
+          <button type="button" class="secondary" id="addOrderItem">Add Item</button>
+          <button type="submit">Place Order</button>
+        </form>
+      </div>
+
+      <div class="panel span-4">
+        <h2>Reserve Table</h2>
+        <form id="reservationForm" class="stack">
+          <div>
+            <label for="reservationTable">Available Table</label>
+            <select id="reservationTable" required></select>
+          </div>
+          <div class="form-row">
+            <div>
+              <label for="reservationName">Customer Name</label>
+              <input id="reservationName" required placeholder="Customer name">
+            </div>
+            <div>
+              <label for="reservationPhone">Phone</label>
+              <input id="reservationPhone" required placeholder="Phone number">
+            </div>
+          </div>
+          <div class="form-row">
+            <div>
+              <label for="partySize">Party Size</label>
+              <input id="partySize" required type="number" min="1" value="2">
+            </div>
+            <div>
+              <label for="reservationTime">Reservation Time</label>
+              <input id="reservationTime" required type="datetime-local">
+            </div>
+          </div>
+          <button type="submit">Reserve Table</button>
+        </form>
+      </div>
+
+      <div class="panel span-6">
+        <h2>Menu</h2>
+        <div id="menuTable"></div>
+      </div>
+
+      <div class="panel span-6">
+        <h2>Tables</h2>
+        <div id="tablesTable"></div>
+      </div>
+
+      <div class="panel span-7">
+        <h2>Orders</h2>
+        <div id="ordersTable"></div>
+      </div>
+
+      <div class="panel span-5">
+        <h2>Update Inventory</h2>
+        <form id="inventoryForm" class="stack">
+          <div>
+            <label for="inventorySelect">Inventory Item</label>
+            <select id="inventorySelect" required></select>
+          </div>
+          <div class="form-row">
+            <div>
+              <label for="inventoryQuantity">Quantity</label>
+              <input id="inventoryQuantity" required type="number" min="0" step="0.01">
+            </div>
+            <div>
+              <label for="inventoryThreshold">Low Stock Threshold</label>
+              <input id="inventoryThreshold" required type="number" min="0" step="0.01">
+            </div>
+          </div>
+          <div>
+            <label for="inventoryUnit">Unit</label>
+            <input id="inventoryUnit" required>
+          </div>
+          <button type="submit">Save Inventory</button>
+        </form>
+      </div>
+
+      <div class="panel span-7">
+        <h2>Inventory</h2>
+        <div id="inventoryTable"></div>
+      </div>
+
+      <div class="panel span-5">
+        <h2>Stock Alerts</h2>
+        <div id="stockAlerts"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const state = {
+      menu: [],
+      tables: [],
+      availableTables: [],
+      inventory: [],
+      orders: [],
+      alerts: [],
+      sales: { total_sales: 0, items: [] }
+    };
+
+    const money = (value) => `Rs ${Number(value || 0).toFixed(2)}`;
+    const message = document.getElementById("message");
+
+    function setMessage(text, isError = false) {
+      message.textContent = text;
+      message.style.background = isError ? "#fde8e7" : "#e8f3ef";
+      message.style.borderColor = isError ? "#f2b8b5" : "#c8e2d8";
+      message.style.color = isError ? "#8a1f17" : "#174534";
+    }
+
+    async function api(path, options = {}) {
+      const response = await fetch(path, {
+        headers: { "Content-Type": "application/json" },
+        ...options
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        const error = Array.isArray(data.error) ? data.error.join(" ") : JSON.stringify(data.error || data);
+        throw new Error(error);
+      }
+      return data;
+    }
+
+    function tableHtml(headers, rows, emptyText) {
+      if (!rows.length) return `<div class="empty">${emptyText}</div>`;
+      return `
+        <table>
+          <thead><tr>${headers.map((header) => `<th>${header}</th>`).join("")}</tr></thead>
+          <tbody>${rows.join("")}</tbody>
+        </table>
+      `;
+    }
+
+    function tag(value) {
+      return `<span class="tag ${String(value).toLowerCase()}">${value}</span>`;
+    }
+
+    function fillSelect(select, options, getLabel, includeEmpty = false) {
+      select.innerHTML = includeEmpty ? `<option value="">Select</option>` : "";
+      options.forEach((option) => {
+        const item = document.createElement("option");
+        item.value = option.id;
+        item.textContent = getLabel(option);
+        select.appendChild(item);
+      });
+    }
+
+    function renderMenu() {
+      document.getElementById("menuTable").innerHTML = tableHtml(
+        ["Name", "Category", "Price"],
+        state.menu.map((item) => `
+          <tr>
+            <td><strong>${item.name}</strong><div class="muted">${item.description || ""}</div></td>
+            <td>${item.category || "General"}</td>
+            <td>${money(item.price)}</td>
+          </tr>
+        `),
+        "No menu items found."
+      );
+    }
+
+    function renderTables() {
+      document.getElementById("tablesTable").innerHTML = tableHtml(
+        ["Table", "Capacity", "Status"],
+        state.tables.map((table) => `
+          <tr>
+            <td>Table ${table.number}</td>
+            <td>${table.capacity}</td>
+            <td>${tag(table.status)}</td>
+          </tr>
+        `),
+        "No tables found."
+      );
+      document.getElementById("tableSummary").textContent =
+        `${state.availableTables.length}/${state.tables.length}`;
+      fillSelect(
+        document.getElementById("orderTable"),
+        state.tables.filter((table) => table.status !== "cleaning"),
+        (table) => `Table ${table.number} - ${table.status}`
+      );
+      fillSelect(
+        document.getElementById("reservationTable"),
+        state.availableTables,
+        (table) => `Table ${table.number} - ${table.capacity} seats`,
+        true
+      );
+    }
+
+    function renderInventory() {
+      document.getElementById("inventoryTable").innerHTML = tableHtml(
+        ["Item", "Quantity", "Threshold", "Status"],
+        state.inventory.map((item) => `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.quantity} ${item.unit}</td>
+            <td>${item.low_stock_threshold} ${item.unit}</td>
+            <td>${item.is_low_stock ? tag("low") : tag("available")}</td>
+          </tr>
+        `),
+        "No inventory found."
+      );
+
+      fillSelect(
+        document.getElementById("inventorySelect"),
+        state.inventory,
+        (item) => `${item.name} (${item.quantity} ${item.unit})`,
+        true
+      );
+    }
+
+    function renderOrders() {
+      document.getElementById("ordersTable").innerHTML = tableHtml(
+        ["Order", "Customer", "Items", "Total", "Status"],
+        state.orders.map((order) => `
+          <tr>
+            <td>
+              <strong>#${order.id}</strong>
+              <div class="muted">Table ${order.table}</div>
+              <div class="muted">${new Date(order.created_at).toLocaleString()}</div>
+            </td>
+            <td>${order.customer_name || "Walk-in customer"}</td>
+            <td>${order.items.map((item) => `${item.quantity} x ${item.menu_item}`).join("<br>")}</td>
+            <td>${money(order.total_amount)}</td>
+            <td>
+              ${tag(order.status)}
+              <div style="margin-top: 8px;">
+                <select data-order-status="${order.id}">
+                  ${["pending", "preparing", "served", "paid", "cancelled"].map((status) =>
+                    `<option value="${status}" ${status === order.status ? "selected" : ""}>${status}</option>`
+                  ).join("")}
+                </select>
+              </div>
+            </td>
+          </tr>
+        `),
+        "No orders placed yet."
+      );
+
+      document.querySelectorAll("[data-order-status]").forEach((select) => {
+        select.addEventListener("change", async (event) => {
+          const orderId = event.target.dataset.orderStatus;
+          await runAction(async () => {
+            await api(`/api/orders/${orderId}/`, {
+              method: "PATCH",
+              body: JSON.stringify({ status: event.target.value })
+            });
+            setMessage(`Order #${orderId} updated.`);
+            await loadAll();
+          });
+        });
+      });
+    }
+
+    function renderReports() {
+      document.getElementById("orderValueTotal").textContent = money(state.sales.total_order_value);
+      document.getElementById("salesTotal").textContent = money(state.sales.total_sales);
+      document.getElementById("ordersTotal").textContent =
+        `${state.sales.total_orders || 0} (${state.sales.active_orders || 0} active)`;
+      document.getElementById("alertCount").textContent = state.alerts.length;
+      document.getElementById("stockAlerts").innerHTML = tableHtml(
+        ["Item", "Quantity", "Threshold"],
+        state.alerts.map((item) => `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.quantity} ${item.unit}</td>
+            <td>${item.low_stock_threshold} ${item.unit}</td>
+          </tr>
+        `),
+        "No low-stock alerts."
+      );
+    }
+
+    function addOrderItemRow() {
+      const row = document.createElement("div");
+      row.className = "order-item";
+      row.innerHTML = `
+        <div>
+          <label>Menu Item</label>
+          <select class="orderMenuItem" required>
+            ${state.menu.map((item) => `<option value="${item.id}">${item.name} - ${money(item.price)}</option>`).join("")}
+          </select>
+        </div>
+        <div>
+          <label>Quantity</label>
+          <input class="orderQuantity" required type="number" min="1" value="1">
+        </div>
+        <button type="button" class="danger removeItem">X</button>
+      `;
+      row.querySelector(".removeItem").addEventListener("click", () => row.remove());
+      document.getElementById("orderItems").appendChild(row);
+    }
+
+    async function loadAll() {
+      const [menu, tables, availableTables, inventory, orders, sales, alerts] = await Promise.all([
+        api("/api/menu/"),
+        api("/api/tables/"),
+        api("/api/tables/available/"),
+        api("/api/inventory/"),
+        api("/api/orders/list/"),
+        api("/api/reports/daily-sales/"),
+        api("/api/reports/stock-alerts/")
+      ]);
+
+      state.menu = menu.menu;
+      state.tables = tables.tables;
+      state.availableTables = availableTables.tables;
+      state.inventory = inventory.inventory;
+      state.orders = orders.orders;
+      state.sales = sales;
+      state.alerts = alerts.alerts;
+
+      renderMenu();
+      renderTables();
+      renderInventory();
+      renderOrders();
+      renderReports();
+
+      if (!document.querySelector(".orderMenuItem")) {
+        addOrderItemRow();
+      }
+
+      setMessage("Dashboard ready. You can place orders, reserve tables, update stock, and view reports.");
+    }
+
+    async function runAction(callback) {
+      try {
+        await callback();
+      } catch (error) {
+        setMessage(error.message, true);
+      }
+    }
+
+    document.getElementById("refreshAll").addEventListener("click", () => runAction(loadAll));
+    document.getElementById("addOrderItem").addEventListener("click", addOrderItemRow);
+
+    document.getElementById("orderForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      await runAction(async () => {
+        const rows = [...document.querySelectorAll(".order-item")];
+        const items = rows.map((row) => ({
+          menu_item_id: Number(row.querySelector(".orderMenuItem").value),
+          quantity: Number(row.querySelector(".orderQuantity").value)
+        }));
+        const result = await api("/api/orders/", {
+          method: "POST",
+          body: JSON.stringify({
+            table_id: Number(document.getElementById("orderTable").value),
+            customer_name: document.getElementById("customerName").value,
+            items
+          })
+        });
+        setMessage(`${result.message} Order #${result.order.id} total: ${money(result.order.total_amount)}.`);
+        document.getElementById("customerName").value = "";
+        document.getElementById("orderItems").innerHTML = "";
+        await loadAll();
+      });
+    });
+
+    document.getElementById("reservationForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      await runAction(async () => {
+        const result = await api("/api/reservations/", {
+          method: "POST",
+          body: JSON.stringify({
+            table_id: Number(document.getElementById("reservationTable").value),
+            customer_name: document.getElementById("reservationName").value,
+            customer_phone: document.getElementById("reservationPhone").value,
+            party_size: Number(document.getElementById("partySize").value),
+            reservation_time: document.getElementById("reservationTime").value
+          })
+        });
+        setMessage(result.message);
+        event.target.reset();
+        await loadAll();
+      });
+    });
+
+    document.getElementById("inventorySelect").addEventListener("change", (event) => {
+      const item = state.inventory.find((entry) => entry.id === Number(event.target.value));
+      if (!item) return;
+      document.getElementById("inventoryQuantity").value = item.quantity;
+      document.getElementById("inventoryThreshold").value = item.low_stock_threshold;
+      document.getElementById("inventoryUnit").value = item.unit;
+    });
+
+    document.getElementById("inventoryForm").addEventListener("submit", async (event) => {
+      event.preventDefault();
+      await runAction(async () => {
+        const itemId = document.getElementById("inventorySelect").value;
+        const result = await api(`/api/inventory/${itemId}/`, {
+          method: "PATCH",
+          body: JSON.stringify({
+            quantity: document.getElementById("inventoryQuantity").value,
+            low_stock_threshold: document.getElementById("inventoryThreshold").value,
+            unit: document.getElementById("inventoryUnit").value
+          })
+        });
+        setMessage(result.message);
+        await loadAll();
+      });
+    });
+
+    loadAll().catch((error) => setMessage(error.message, true));
+  </script>
+</body>
+</html>

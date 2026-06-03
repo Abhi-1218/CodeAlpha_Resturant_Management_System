@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Django/local database
+db.sqlite3
+*.sqlite3
+
+# Django/static build output
+staticfiles/
+media/
+
+# Local environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# Test and coverage output
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code workspace noise
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/settings.json
