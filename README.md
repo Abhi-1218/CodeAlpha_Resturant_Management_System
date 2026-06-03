@@ -62,8 +62,8 @@ POST /api/reservations/
 Content-Type: application/json
 
 {
-  "customer_name": "Aakash",
-  "customer_phone": "9876543210",
+  "customer_name": "Abhi",
+  "customer_phone": "xxxxxxxxxx",
   "table_id": 1,
   "party_size": 4,
   "reservation_time": "2026-06-03T20:00:00+05:30"
